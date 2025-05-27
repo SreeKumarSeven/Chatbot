@@ -2,26 +2,26 @@
     "version": 2,
     "builds": [
         {
-            "src": "backend/app.py",
+            "src": "Anthill Iq Chatbot/app.py",
             "use": "@vercel/python"
         },
         {
-            "src": "backend/admin_dashboard/**",
+            "src": "Anthill Iq Chatbot/admin_dashboard/**",
             "use": "@vercel/static"
         }
     ],
     "routes": [
         {
             "src": "/api/(.*)",
-            "dest": "backend/app.py"
+            "dest": "Anthill Iq Chatbot/app.py"
         },
         {
             "src": "/admin_dashboard/(.*)",
-            "dest": "backend/admin_dashboard/$1"
+            "dest": "Anthill Iq Chatbot/admin_dashboard/$1"
         },
         {
             "src": "/(.*)",
-            "dest": "backend/app.py"
+            "dest": "Anthill Iq Chatbot/app.py"
         }
     ]
-} 
+}
