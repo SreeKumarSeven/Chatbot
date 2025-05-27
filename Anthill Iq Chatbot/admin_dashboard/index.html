@@ -3,199 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anthill IQ - Admin Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <title>Anthill IQ Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --success: #10b981;
-            --white: #ffffff;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --dark: #1e293b;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --sidebar-width: 250px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #f8f9fa;
+        }
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            background: #03ab14;
+            color: white;
+            padding: 1rem;
+        }
+        .main-content {
+            margin-left: var(--sidebar-width);
             padding: 2rem;
         }
-
-        .login-container {
-            background: var(--white);
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 420px;
-            padding: 2.5rem;
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.5rem 1rem;
+            margin: 0.2rem 0;
+            border-radius: 5px;
         }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
         }
-
-        .logo {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            color: var(--white);
-            font-size: 2rem;
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+        .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.2);
         }
-
-        .brand {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: #64748b;
-            font-size: 1rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            font-weight: 500;
-        }
-
-        .input-group {
-            position: relative;
-        }
-
-        .input-group i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: var(--gray-100);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--white);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: var(--white);
+        .card {
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
         }
-
-        .forgot-password {
+        .loading {
+            display: none;
             text-align: center;
-            margin-top: 1.5rem;
+            padding: 2rem;
         }
-
-        .forgot-password a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            color: var(--primary-dark);
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 2rem;
-            }
-
-            .logo {
-                width: 60px;
-                height: 60px;
-                font-size: 1.75rem;
-            }
-
-            .brand {
-                font-size: 1.5rem;
-            }
+        .error-alert {
+            display: none;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <div class="logo">
-                <i class="fas fa-robot"></i>
-            </div>
-            <h1 class="brand">Anthill IQ</h1>
-            <p class="subtitle">Admin Dashboard</p>
-        </div>
-        <form action="dashboard.html" method="GET">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
-                </div>
-            </div>
-            <button type="submit" class="btn-login">Sign In</button>
-            <div class="forgot-password">
-                <a href="#">Forgot Password?</a>
-            </div>
-        </form>
+    <div class="sidebar">
+        <h4 class="mb-4 text-white">Anthill IQ</h4>
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#dashboard">
+                <i class='bx bxs-dashboard'></i> Dashboard
+            </a>
+            <a class="nav-link" href="#users">
+                <i class='bx bxs-user-detail'></i> Users
+            </a>
+            <a class="nav-link" href="#conversations">
+                <i class='bx bxs-conversation'></i> Conversations
+            </a>
+            <a class="nav-link" href="#settings">
+                <i class='bx bxs-cog'></i> Settings
+            </a>
+            <a class="nav-link" href="#" onclick="handleLogout()">
+                <i class='bx bxs-log-out'></i> Logout
+            </a>
+        </nav>
     </div>
+
+    <div class="main-content">
+        <div class="alert alert-danger error-alert" id="errorAlert">
+            Error loading data. Please check your connection and try again.
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <div class="container-fluid" id="dashboardContent">
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
+                            <h2 class="card-title" id="totalUsers">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Active Today</h6>
+                            <h2 class="card-title" id="activeUsers">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Total Conversations</h6>
+                            <h2 class="card-title" id="totalConversations">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Avg. Response Time</h6>
+                            <h2 class="card-title" id="avgResponseTime">0s</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Users Table -->
+            <div class="table-container">
+                <h5 class="mb-3">Recent Users</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Joined</th>
+                            <th>Total Chats</th>
+                            <th>Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentUsersTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recent Conversations Table -->
+            <div class="table-container">
+                <h5 class="mb-3">Recent Conversations</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Message</th>
+                            <th>Response</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentConversationsTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadDashboardData();
+        });
+
+        async function loadDashboardData() {
+            const token = localStorage.getItem('adminToken');
+            const loading = document.getElementById('loading');
+            const errorAlert = document.getElementById('errorAlert');
+            const dashboardContent = document.getElementById('dashboardContent');
+
+            loading.style.display = 'block';
+            errorAlert.style.display = 'none';
+            dashboardContent.style.opacity = '0.5';
+
+            try {
+                // Load statistics
+                const statsResponse = await fetch('/api/admin/stats', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!statsResponse.ok) {
+                    if (statsResponse.status === 401) {
+                        localStorage.removeItem('adminToken');
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                    throw new Error('Failed to load stats');
+                }
+
+                const stats = await statsResponse.json();
+                
+                // Update stats cards
+                document.getElementById('totalUsers').textContent = stats.total_users;
+                document.getElementById('activeUsers').textContent = stats.active_users;
+                document.getElementById('totalConversations').textContent = stats.total_conversations;
+                document.getElementById('avgResponseTime').textContent = stats.avg_response_time + 's';
+
+                // Load recent users
+                const usersResponse = await fetch('/api/admin/recent-users', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!usersResponse.ok) throw new Error('Failed to load users');
+                const users = await usersResponse.json();
+                
+                // Update users table
+                const usersTable = document.getElementById('recentUsersTable');
+                usersTable.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${escapeHtml(user.name)}</td>
+                        <td>${escapeHtml(user.phone)}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>${user.total_chats}</td>
+                        <td>${new Date(user.last_active).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+
+                // Load recent conversations
+                const conversationsResponse = await fetch('/api/admin/recent-conversations', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!conversationsResponse.ok) throw new Error('Failed to load conversations');
+                const conversations = await conversationsResponse.json();
+                
+                // Update conversations table
+                const conversationsTable = document.getElementById('recentConversationsTable');
+                conversationsTable.innerHTML = conversations.map(conv => `
+                    <tr>
+                        <td>${escapeHtml(conv.user_name)}</td>
+                        <td>${escapeHtml(conv.message)}</td>
+                        <td>${escapeHtml(conv.response)}</td>
+                        <td>${new Date(conv.timestamp).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                errorAlert.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                dashboardContent.style.opacity = '1';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = 'index.html';
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Refresh dashboard data every 30 seconds
+        setInterval(loadDashboardData, 30000);
+    </script>
 </body>
 </html>
