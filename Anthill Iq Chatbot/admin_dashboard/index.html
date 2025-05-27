@@ -3,293 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anthill IQ Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
+    <title>Admin Login - Anthill IQ</title>
     <style>
         :root {
-            --sidebar-width: 250px;
+            --primary: #03ab14;
+            --primary-dark: #028610;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --gray-100: #f8fafc;
+            --gray-200: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
         body {
             min-height: 100vh;
-            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 20px;
         }
-        .sidebar {
-            width: var(--sidebar-width);
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            background: #03ab14;
-            color: white;
-            padding: 1rem;
+
+        .login-container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
         }
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 0.5rem 1rem;
-            margin: 0.2rem 0;
-            border-radius: 5px;
-        }
-        .nav-link:hover {
-            color: white;
-            background: rgba(255,255,255,0.1);
-        }
-        .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.2);
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-        }
-        .loading {
-            display: none;
+
+        .login-header {
             text-align: center;
-            padding: 2rem;
+            margin-bottom: 30px;
         }
-        .error-alert {
+
+        .login-header h1 {
+            color: var(--text-dark);
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-dark);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(3, 171, 20, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 8px;
             display: none;
-            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h4 class="mb-4 text-white">Anthill IQ</h4>
-        <nav class="nav flex-column">
-            <a class="nav-link active" href="#dashboard">
-                <i class='bx bxs-dashboard'></i> Dashboard
-            </a>
-            <a class="nav-link" href="#users">
-                <i class='bx bxs-user-detail'></i> Users
-            </a>
-            <a class="nav-link" href="#conversations">
-                <i class='bx bxs-conversation'></i> Conversations
-            </a>
-            <a class="nav-link" href="#settings">
-                <i class='bx bxs-cog'></i> Settings
-            </a>
-            <a class="nav-link" href="#" onclick="handleLogout()">
-                <i class='bx bxs-log-out'></i> Logout
-            </a>
-        </nav>
-    </div>
-
-    <div class="main-content">
-        <div class="alert alert-danger error-alert" id="errorAlert">
-            Error loading data. Please check your connection and try again.
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Admin Login</h1>
+            <p>Welcome back! Please login to your account.</p>
         </div>
-
-        <div class="loading" id="loading">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
             </div>
-        </div>
-
-        <div class="container-fluid" id="dashboardContent">
-            <!-- Stats Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
-                            <h2 class="card-title" id="totalUsers">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Active Today</h6>
-                            <h2 class="card-title" id="activeUsers">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Total Conversations</h6>
-                            <h2 class="card-title" id="totalConversations">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Avg. Response Time</h6>
-                            <h2 class="card-title" id="avgResponseTime">0s</h2>
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
             </div>
-
-            <!-- Recent Users Table -->
-            <div class="table-container">
-                <h5 class="mb-3">Recent Users</h5>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Joined</th>
-                            <th>Total Chats</th>
-                            <th>Last Active</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentUsersTable">
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Recent Conversations Table -->
-            <div class="table-container">
-                <h5 class="mb-3">Recent Conversations</h5>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Message</th>
-                            <th>Response</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentConversationsTable">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <div class="error-message" id="errorMessage"></div>
+            <button type="submit" class="login-button">Login</button>
+        </form>
     </div>
 
     <script>
-        // Check authentication on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('adminToken');
-            if (!token) {
-                window.location.href = 'index.html';
-                return;
-            }
-            loadDashboardData();
-        });
-
-        async function loadDashboardData() {
-            const token = localStorage.getItem('adminToken');
-            const loading = document.getElementById('loading');
-            const errorAlert = document.getElementById('errorAlert');
-            const dashboardContent = document.getElementById('dashboardContent');
-
-            loading.style.display = 'block';
-            errorAlert.style.display = 'none';
-            dashboardContent.style.opacity = '0.5';
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
 
             try {
-                // Load statistics
-                const statsResponse = await fetch('/api/admin/stats', {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
+                const response = await fetch('https://chatbot-eight-theta-90.vercel.app/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
                 });
 
-                if (!statsResponse.ok) {
-                    if (statsResponse.status === 401) {
-                        localStorage.removeItem('adminToken');
-                        window.location.href = 'index.html';
-                        return;
-                    }
-                    throw new Error('Failed to load stats');
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store the token
+                    localStorage.setItem('adminToken', data.token);
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorMessage.textContent = data.message || 'Invalid credentials';
+                    errorMessage.style.display = 'block';
                 }
-
-                const stats = await statsResponse.json();
-                
-                // Update stats cards
-                document.getElementById('totalUsers').textContent = stats.total_users;
-                document.getElementById('activeUsers').textContent = stats.active_users;
-                document.getElementById('totalConversations').textContent = stats.total_conversations;
-                document.getElementById('avgResponseTime').textContent = stats.avg_response_time + 's';
-
-                // Load recent users
-                const usersResponse = await fetch('/api/admin/recent-users', {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!usersResponse.ok) throw new Error('Failed to load users');
-                const users = await usersResponse.json();
-                
-                // Update users table
-                const usersTable = document.getElementById('recentUsersTable');
-                usersTable.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${escapeHtml(user.name)}</td>
-                        <td>${escapeHtml(user.phone)}</td>
-                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
-                        <td>${user.total_chats}</td>
-                        <td>${new Date(user.last_active).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-
-                // Load recent conversations
-                const conversationsResponse = await fetch('/api/admin/recent-conversations', {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!conversationsResponse.ok) throw new Error('Failed to load conversations');
-                const conversations = await conversationsResponse.json();
-                
-                // Update conversations table
-                const conversationsTable = document.getElementById('recentConversationsTable');
-                conversationsTable.innerHTML = conversations.map(conv => `
-                    <tr>
-                        <td>${escapeHtml(conv.user_name)}</td>
-                        <td>${escapeHtml(conv.message)}</td>
-                        <td>${escapeHtml(conv.response)}</td>
-                        <td>${new Date(conv.timestamp).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-
             } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                errorAlert.style.display = 'block';
-            } finally {
-                loading.style.display = 'none';
-                dashboardContent.style.opacity = '1';
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
             }
+
+            return false;
         }
 
-        function handleLogout() {
-            localStorage.removeItem('adminToken');
-            window.location.href = 'index.html';
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        // Refresh dashboard data every 30 seconds
-        setInterval(loadDashboardData, 30000);
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                window.location.href = 'dashboard.html';
+            }
+        });
     </script>
 </body>
 </html>
