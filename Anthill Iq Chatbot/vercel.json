@@ -8,6 +8,10 @@
         {
             "src": "admin_dashboard/**",
             "use": "@vercel/static"
+        },
+        {
+            "src": "anthill_chatbot_widget.html",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
@@ -18,6 +22,10 @@
         {
             "src": "/admin_dashboard/(.*)",
             "dest": "admin_dashboard/$1"
+        },
+        {
+            "src": "/anthill_chatbot_widget.html",
+            "dest": "anthill_chatbot_widget.html"
         },
         {
             "src": "/(.*)",
