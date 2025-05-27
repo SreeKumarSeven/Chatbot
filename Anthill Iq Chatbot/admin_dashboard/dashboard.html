@@ -331,13 +331,19 @@
             if (!token) return;
 
             try {
-                const response = await fetch('https://chatbot-eight-theta-90.vercel.app/api/admin/dashboard', {
+                const response = await fetch('https://chatbot-eight-theta-90.vercel.app/api/admin/stats', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
 
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        // Token expired or invalid
+                        localStorage.removeItem('adminToken');
+                        window.location.href = 'index.html';
+                        return;
+                    }
                     throw new Error('Failed to fetch dashboard data');
                 }
 
@@ -345,16 +351,16 @@
                 updateDashboard(data);
             } catch (error) {
                 console.error('Error:', error);
-                showError('Failed to load dashboard data');
+                showError('Failed to load dashboard data. Please try again later.');
             }
         }
 
         // Update dashboard with data
         function updateDashboard(data) {
-            // Update stats
-            document.getElementById('totalUsers').textContent = data.totalUsers || 0;
-            document.getElementById('activeChats').textContent = data.activeChats || 0;
-            document.getElementById('totalMessages').textContent = data.totalMessages || 0;
+            // Update stats with fallback values
+            document.getElementById('totalUsers').textContent = data.totalUsers || '0';
+            document.getElementById('activeChats').textContent = data.activeChats || '0';
+            document.getElementById('totalMessages').textContent = data.totalMessages || '0';
 
             // Update activity table
             const activityTable = document.getElementById('activityTable');
@@ -372,12 +378,12 @@
                         <tbody>
                             ${data.recentActivity.map(activity => `
                                 <tr>
-                                    <td>${activity.user}</td>
-                                    <td>${activity.action}</td>
-                                    <td>${new Date(activity.timestamp).toLocaleString()}</td>
+                                    <td>${activity.user || 'Anonymous'}</td>
+                                    <td>${activity.action || 'Unknown'}</td>
+                                    <td>${activity.timestamp ? new Date(activity.timestamp).toLocaleString() : 'N/A'}</td>
                                     <td>
                                         <span class="status-badge ${activity.status === 'active' ? 'status-active' : 'status-pending'}">
-                                            ${activity.status}
+                                            ${activity.status || 'pending'}
                                         </span>
                                     </td>
                                 </tr>
@@ -386,7 +392,12 @@
                     </table>
                 `;
             } else {
-                activityTable.innerHTML = '<p style="text-align: center; color: var(--text-light);">No recent activity</p>';
+                activityTable.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-info-circle" style="font-size: 24px; color: var(--text-light); margin-bottom: 10px;"></i>
+                        <p style="color: var(--text-light);">No recent activity to display</p>
+                    </div>
+                `;
             }
         }
 
@@ -394,9 +405,21 @@
         function showError(message) {
             const activityTable = document.getElementById('activityTable');
             activityTable.innerHTML = `
-                <div style="text-align: center; color: #dc2626; padding: 20px;">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p>${message}</p>
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 24px; color: #dc2626; margin-bottom: 10px;"></i>
+                    <p style="color: #dc2626;">${message}</p>
+                    <button onclick="fetchDashboardData()" style="
+                        margin-top: 15px;
+                        padding: 8px 16px;
+                        background: var(--primary);
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 14px;
+                    ">
+                        <i class="fas fa-sync-alt"></i> Retry
+                    </button>
                 </div>
             `;
         }
