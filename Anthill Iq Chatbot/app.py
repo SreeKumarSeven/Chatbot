@@ -191,6 +191,10 @@ app.mount(
     name="admin_dashboard"
 )
 
+@app.get("/")
+def read_root():
+    return {"message": "Anthill IQ Chatbot API is running."}
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", "8000"))
