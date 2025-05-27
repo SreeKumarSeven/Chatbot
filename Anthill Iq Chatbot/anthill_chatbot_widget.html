@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthill IQ Chatbot</title>
+    <style>
+        /* Modern Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Base responsive variables */
+        :root {
+            --primary-color: #03ab14;
+            --primary-dark: #028610;
+            --primary-light: #e6f7e8;
+            --shadow-light: rgba(3, 171, 20, 0.15);
+            --shadow-dark: rgba(3, 171, 20, 0.3);
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --chat-window-width: min(380px, 90vw);
+            --chat-window-height: min(550px, 80vh);
+            --chat-toggle-size: min(64px, 15vw);
+            --message-max-width: 85%;
+            --border-radius-lg: 20px;
+            --border-radius-sm: 15px;
+            --spacing-lg: 20px;
+            --spacing-md: 16px;
+            --spacing-sm: 12px;
+            --font-size-lg: clamp(14px, 2vw, 16px);
+            --font-size-md: clamp(13px, 1.8vw, 15px);
+            --font-size-sm: clamp(12px, 1.6vw, 14px);
+        }
+
+        /* Main widget container */
+        .chat-widget {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            z-index: 1000;
+        }
+
+        /* Chat toggle button */
+        .chat-toggle {
+            width: var(--chat-toggle-size);
+            height: var(--chat-toggle-size);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 10px 25px var(--shadow-dark);
+        }
+
+        /* Chat window */
+        .chat-window {
+            position: fixed;
+            bottom: calc(var(--spacing-lg) + var(--chat-toggle-size) + 10px);
+            right: var(--spacing-lg);
+            width: var(--chat-window-width);
+            height: var(--chat-window-height);
+            border-radius: var(--border-radius-lg);
+            background-color: white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--transition);
+            transform-origin: bottom right;
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+
+        /* Registration form */
+        .registration-form {
+            padding: var(--spacing-lg);
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            height: 100%;
+        }
+
+        .registration-form h3 {
+            color: var(--text-dark);
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: var(--text-light);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-md);
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--shadow-light);
+        }
+
+        .submit-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: auto;
+        }
+
+        .submit-button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Chat interface */
+        .chat-header {
+            padding: var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+        }
+
+        .close-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .message {
+            max-width: var(--message-max-width);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-md);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .bot-message {
+            background-color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-message {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: var(--spacing-md);
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-md);
+            resize: none;
+            max-height: 100px;
+            min-height: 44px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--shadow-light);
+        }
+
+        .send-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .send-button:hover {
+            background: var(--primary-dark);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .chat-window {
+                width: 100vw;
+                height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+
+            .chat-toggle {
+                bottom: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="anthill-chat-widget" class="chat-widget">
+        <!-- Chat toggle button -->
+        <button id="chat-toggle" class="chat-toggle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.663 3.04094 17.0829 4.73812 18.875L2.72681 21.1705C2.44361 21.4937 2.67314 22 3.10288 22H12Z" fill="white"/>
+                <circle cx="7" cy="12" r="1.5" fill="var(--primary-dark)"/>
+                <circle cx="12" cy="12" r="1.5" fill="var(--primary-dark)"/>
+                <circle cx="17" cy="12" r="1.5" fill="var(--primary-dark)"/>
+                </svg>
+        </button>
+
+        <!-- Chat window -->
+        <div id="chat-window" class="chat-window hidden">
+            <!-- Registration form -->
+            <div id="registration-form" class="registration-form">
+                <h3>Welcome to Anthill IQ Chat! 👋</h3>
+                <p>Please provide your details to start chatting</p>
+                
+                <div class="form-group">
+                    <label for="user-name">Name</label>
+                    <input type="text" id="user-name" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="user-phone">Phone Number</label>
+                    <input type="tel" id="user-phone" placeholder="Enter your phone number" required>
+                </div>
+                
+                <button id="start-chat" class="submit-button">Start Chatting</button>
+            </div>
+
+            <!-- Chat interface (initially hidden) -->
+            <div id="chat-interface" style="display: none; height: 100%; flex-direction: column;">
+            <div class="chat-header">
+                <h3>Anthill IQ Assistant</h3>
+                <button id="close-chat" class="close-button">×</button>
+            </div>
+
+            <div id="chat-messages" class="chat-messages"></div>
+
+            <div class="chat-input-area">
+                    <textarea id="chat-input" class="chat-input" placeholder="Type your message..." rows="1"></textarea>
+                    <button id="send-message" class="send-button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const CONFIG = {
+            API_URL: 'http://localhost:8088/api/chat',
+            REGISTER_URL: 'http://localhost:8088/api/register'
+        };
+
+        // Get DOM elements
+        const chatToggle = document.getElementById('chat-toggle');
+        const chatWindow = document.getElementById('chat-window');
+        const closeChat = document.getElementById('close-chat');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendMessage = document.getElementById('send-message');
+        const registrationForm = document.getElementById('registration-form');
+        const chatInterface = document.getElementById('chat-interface');
+        const startChatButton = document.getElementById('start-chat');
+        const userNameInput = document.getElementById('user-name');
+        const userPhoneInput = document.getElementById('user-phone');
+
+        // State management
+        let sessionId = null;
+        let userData = null;
+
+        // Initialize the chat widget
+        function initChatWidget() {
+            // Check for existing user data
+            const savedUserData = localStorage.getItem('anthillChatUserData');
+            if (savedUserData) {
+                userData = JSON.parse(savedUserData);
+                showChatInterface();
+            }
+            
+            // Set up event listeners
+            chatToggle.addEventListener('click', toggleChat);
+            closeChat.addEventListener('click', closeWidget);
+            sendMessage.addEventListener('click', handleSendMessage);
+            chatInput.addEventListener('keypress', handleInputKeypress);
+            startChatButton.addEventListener('click', handleRegistration);
+            
+            // Auto-resize textarea
+            chatInput.addEventListener('input', () => {
+                chatInput.style.height = 'auto';
+                chatInput.style.height = (chatInput.scrollHeight) + 'px';
+            });
+        }
+
+        // Handle user registration
+        async function handleRegistration() {
+            const name = userNameInput.value.trim();
+            const phone = userPhoneInput.value.trim();
+
+            if (!name || !phone) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (!isValidPhone(phone)) {
+                alert('Please enter a valid phone number');
+                return;
+            }
+
+            try {
+                const response = await fetch(CONFIG.REGISTER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    userData = { 
+                        id: data.user_id,
+                        name: name, 
+                        phone: phone 
+                    };
+                    localStorage.setItem('anthillChatUserData', JSON.stringify(userData));
+                    showChatInterface();
+                } else {
+                    alert('Registration failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Registration failed. Please try again.');
+            }
+        }
+
+        // Validate phone number
+        function isValidPhone(phone) {
+            const phoneRegex = /^[0-9]{10}$/;
+            return phoneRegex.test(phone.replace(/[^0-9]/g, ''));
+        }
+
+        // Show chat interface after registration
+        function showChatInterface() {
+            registrationForm.style.display = 'none';
+            chatInterface.style.display = 'flex';
+            addMessage('Hello! 👋 I\'m the Anthill IQ Assistant. How can I help you today?', 'bot');
+        }
+
+        // Toggle chat window visibility
+        function toggleChat() {
+            chatWindow.classList.toggle('hidden');
+            if (!chatWindow.classList.contains('hidden')) {
+                if (userData) {
+                    chatInput.focus();
+                } else {
+                    userNameInput.focus();
+                }
+            }
+        }
+
+        // Close the chat widget
+        function closeWidget() {
+            chatWindow.classList.add('hidden');
+        }
+
+        // Add a message to the chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Handle sending a message
+        async function handleSendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            // Clear input
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            
+            // Add user message
+            addMessage(message, 'user');
+
+            try {
+                const response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        phone: userData.phone
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Save session ID
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                }
+                
+                // Add bot response
+                addMessage(data.response, 'bot');
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('Sorry, there was an error. Please try again.', 'bot');
+            }
+        }
+
+        // Handle input keypress
+        function handleInputKeypress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleSendMessage();
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initChatWidget);
+    </script>
+</body>
+</html> 
