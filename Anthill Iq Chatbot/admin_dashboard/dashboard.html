@@ -3,473 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anthill IQ - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <title>Anthill IQ Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --white: #ffffff;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --sidebar-width: 250px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background: #f3f4f6;
-            color: var(--dark);
-        }
-
-        .dashboard {
-            display: flex;
             min-height: 100vh;
+            background: #f8f9fa;
         }
-
-        /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
-            padding: 2rem;
-            color: var(--white);
+            width: var(--sidebar-width);
             position: fixed;
+            left: 0;
+            top: 0;
             height: 100vh;
-            transition: all 0.3s ease;
+            background: #03ab14;
+            color: white;
+            padding: 1rem;
         }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo {
-            width: 45px;
-            height: 45px;
-            background: var(--white);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .brand {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .nav-link i {
-            font-size: 1.25rem;
-        }
-
-        /* Main Content */
         .main-content {
-            flex: 1;
-            margin-left: 280px;
+            margin-left: var(--sidebar-width);
             padding: 2rem;
         }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--gray-100);
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 1.75rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-title {
-            color: var(--dark);
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--primary);
-        }
-
-        .stat-change {
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--danger);
-        }
-
-        /* Recent Activity */
-        .recent-activity {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .activity-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 0.5rem;
-        }
-
-        .activity-table th {
-            text-align: left;
-            padding: 1rem;
-            font-weight: 500;
-            color: var(--dark);
-            border-bottom: 2px solid var(--gray-200);
-        }
-
-        .activity-table td {
-            padding: 1rem;
-            background: var(--gray-100);
-        }
-
-        .activity-table tr td:first-child {
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-
-        .activity-table tr td:last-child {
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-
-        .status-badge {
+        .nav-link {
+            color: rgba(255,255,255,0.8);
             padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            display: inline-block;
+            margin: 0.2rem 0;
+            border-radius: 5px;
         }
-
-        .status-badge.active {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
         }
-
-        .status-badge.pending {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
+        .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.2);
         }
-
-        .status-badge.inactive {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 80px;
-                padding: 1.5rem 1rem;
-            }
-
-            .sidebar-header {
-                justify-content: center;
-            }
-
-            .brand, .nav-link span {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 80px;
-            }
-
-            .nav-link {
-                justify-content: center;
-                padding: 1rem;
-            }
-
-            .nav-link i {
-                margin: 0;
-            }
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
         }
-
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .user-info {
-                width: 100%;
-                justify-content: center;
-            }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        .error-alert {
+            display: none;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <span class="brand">Anthill IQ</span>
+    <div class="sidebar">
+        <h4 class="mb-4 text-white">Anthill IQ</h4>
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#dashboard">
+                <i class='bx bxs-dashboard'></i> Dashboard
+            </a>
+            <a class="nav-link" href="#users">
+                <i class='bx bxs-user-detail'></i> Users
+            </a>
+            <a class="nav-link" href="#conversations">
+                <i class='bx bxs-conversation'></i> Conversations
+            </a>
+            <a class="nav-link" href="#settings">
+                <i class='bx bxs-cog'></i> Settings
+            </a>
+            <a class="nav-link" href="#" onclick="handleLogout()">
+                <i class='bx bxs-log-out'></i> Logout
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="alert alert-danger error-alert" id="errorAlert">
+            Error loading data. Please check your connection and try again.
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-users"></i>
-                        <span>Users</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-comments"></i>
-                        <span>Chats</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Analytics</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
+        </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="header">
-                <h1 class="page-title">Dashboard Overview</h1>
-                <div class="user-info">
-                    <div class="user-avatar">A</div>
-                    <span>Admin User</span>
-                </div>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">Total Users</span>
-                        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">
-                            <i class="fas fa-users"></i>
+        <div class="container-fluid" id="dashboardContent">
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
+                            <h2 class="card-title" id="totalUsers">0</h2>
                         </div>
                     </div>
-                    <div class="stat-value">2,543</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>12.5% from last month</span>
-                    </div>
                 </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">Active Chats</span>
-                        <div class="stat-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--secondary);">
-                            <i class="fas fa-comments"></i>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Active Today</h6>
+                            <h2 class="card-title" id="activeUsers">0</h2>
                         </div>
                     </div>
-                    <div class="stat-value">156</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>8.2% from last hour</span>
-                    </div>
                 </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">Total Messages</span>
-                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                            <i class="fas fa-envelope"></i>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Total Conversations</h6>
+                            <h2 class="card-title" id="totalConversations">0</h2>
                         </div>
                     </div>
-                    <div class="stat-value">12,845</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>23.1% from last week</span>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Avg. Response Time</h6>
+                            <h2 class="card-title" id="avgResponseTime">0s</h2>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="recent-activity">
-                <div class="section-header">
-                    <h2 class="section-title">Recent Activity</h2>
-                </div>
-                <table class="activity-table">
+            <!-- Recent Users Table -->
+            <div class="table-container">
+                <h5 class="mb-3">Recent Users</h5>
+                <table class="table">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Activity</th>
-                            <th>Time</th>
-                            <th>Status</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Joined</th>
+                            <th>Total Chats</th>
+                            <th>Last Active</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Doe</td>
-                            <td>Started new chat session</td>
-                            <td>2 minutes ago</td>
-                            <td><span class="status-badge active">Active</span></td>
-                        </tr>
-                        <tr>
-                            <td>Jane Smith</td>
-                            <td>Completed feedback form</td>
-                            <td>15 minutes ago</td>
-                            <td><span class="status-badge pending">Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>Mike Johnson</td>
-                            <td>Ended chat session</td>
-                            <td>1 hour ago</td>
-                            <td><span class="status-badge inactive">Inactive</span></td>
-                        </tr>
+                    <tbody id="recentUsersTable">
                     </tbody>
                 </table>
             </div>
-        </main>
+
+            <!-- Recent Conversations Table -->
+            <div class="table-container">
+                <h5 class="mb-3">Recent Conversations</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Message</th>
+                            <th>Response</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentConversationsTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadDashboardData();
+        });
+
+        async function loadDashboardData() {
+            const token = localStorage.getItem('adminToken');
+            const loading = document.getElementById('loading');
+            const errorAlert = document.getElementById('errorAlert');
+            const dashboardContent = document.getElementById('dashboardContent');
+
+            loading.style.display = 'block';
+            errorAlert.style.display = 'none';
+            dashboardContent.style.opacity = '0.5';
+
+            try {
+                // Load statistics
+                const statsResponse = await fetch('/api/admin/stats', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!statsResponse.ok) {
+                    if (statsResponse.status === 401) {
+                        localStorage.removeItem('adminToken');
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                    throw new Error('Failed to load stats');
+                }
+
+                const stats = await statsResponse.json();
+                
+                // Update stats cards
+                document.getElementById('totalUsers').textContent = stats.total_users;
+                document.getElementById('activeUsers').textContent = stats.active_users;
+                document.getElementById('totalConversations').textContent = stats.total_conversations;
+                document.getElementById('avgResponseTime').textContent = stats.avg_response_time + 's';
+
+                // Load recent users
+                const usersResponse = await fetch('/api/admin/recent-users', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!usersResponse.ok) throw new Error('Failed to load users');
+                const users = await usersResponse.json();
+                
+                // Update users table
+                const usersTable = document.getElementById('recentUsersTable');
+                usersTable.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${escapeHtml(user.name)}</td>
+                        <td>${escapeHtml(user.phone)}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>${user.total_chats}</td>
+                        <td>${new Date(user.last_active).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+
+                // Load recent conversations
+                const conversationsResponse = await fetch('/api/admin/recent-conversations', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!conversationsResponse.ok) throw new Error('Failed to load conversations');
+                const conversations = await conversationsResponse.json();
+                
+                // Update conversations table
+                const conversationsTable = document.getElementById('recentConversationsTable');
+                conversationsTable.innerHTML = conversations.map(conv => `
+                    <tr>
+                        <td>${escapeHtml(conv.user_name)}</td>
+                        <td>${escapeHtml(conv.message)}</td>
+                        <td>${escapeHtml(conv.response)}</td>
+                        <td>${new Date(conv.timestamp).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                errorAlert.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                dashboardContent.style.opacity = '1';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = 'index.html';
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Refresh dashboard data every 30 seconds
+        setInterval(loadDashboardData, 30000);
+    </script>
 </body>
 </html>
