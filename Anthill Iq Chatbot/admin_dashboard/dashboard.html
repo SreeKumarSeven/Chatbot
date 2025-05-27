@@ -3,293 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anthill IQ Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
+    <title>Admin Dashboard - Anthill IQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <style>
         :root {
-            --sidebar-width: 250px;
+            --primary: #03ab14;
+            --primary-dark: #028610;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --gray-100: #f8fafc;
+            --gray-200: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
         body {
+            background: var(--gray-100);
             min-height: 100vh;
-            background: #f8f9fa;
+            display: flex;
         }
+
+        /* Sidebar */
         .sidebar {
-            width: var(--sidebar-width);
+            width: 260px;
+            background: var(--white);
+            height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            height: 100vh;
-            background: #03ab14;
-            color: white;
-            padding: 1rem;
+            padding: 20px;
+            box-shadow: var(--shadow);
         }
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 600;
         }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
         .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 0.5rem 1rem;
-            margin: 0.2rem 0;
-            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        .nav-link:hover {
-            color: white;
-            background: rgba(255,255,255,0.1);
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
         }
-        .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.2);
+
+        .nav-link i {
+            width: 20px;
         }
-        .card {
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--text-dark);
+            font-size: 24px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-menu button {
+            background: none;
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
+
+        .user-menu button:hover {
+            background: var(--gray-200);
         }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card h3 {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            color: var(--text-dark);
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .recent-activity h2 {
+            color: var(--text-dark);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activity-table th,
+        .activity-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .activity-table th {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .activity-table td {
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Loading State */
         .loading {
-            display: none;
-            text-align: center;
-            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--text-light);
         }
-        .error-alert {
-            display: none;
-            margin-bottom: 1rem;
+
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
     <div class="sidebar">
-        <h4 class="mb-4 text-white">Anthill IQ</h4>
-        <nav class="nav flex-column">
-            <a class="nav-link active" href="#dashboard">
-                <i class='bx bxs-dashboard'></i> Dashboard
-            </a>
-            <a class="nav-link" href="#users">
-                <i class='bx bxs-user-detail'></i> Users
-            </a>
-            <a class="nav-link" href="#conversations">
-                <i class='bx bxs-conversation'></i> Conversations
-            </a>
-<!--             <a class="nav-link" href="#settings">
-                <i class='bx bxs-cog'></i> Settings
-            </a> -->
-            <a class="nav-link" href="#" onclick="handleLogout()">
-                <i class='bx bxs-log-out'></i> Logout
-            </a>
-        </nav>
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            <span>Anthill IQ</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chats</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
-        <div class="alert alert-danger error-alert" id="errorAlert">
-            Error loading data. Please check your connection and try again.
-        </div>
-
-        <div class="loading" id="loading">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="user-menu">
+                <button onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
         </div>
 
-        <div class="container-fluid" id="dashboardContent">
-            <!-- Stats Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
-                            <h2 class="card-title" id="totalUsers">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Active Today</h6>
-                            <h2 class="card-title" id="activeUsers">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Total Conversations</h6>
-                            <h2 class="card-title" id="totalConversations">0</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">Avg. Response Time</h6>
-                            <h2 class="card-title" id="avgResponseTime">0s</h2>
-                        </div>
-                    </div>
-                </div>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="value" id="totalUsers">-</div>
             </div>
-
-            <!-- Recent Users Table -->
-            <div class="table-container">
-                <h5 class="mb-3">Recent Users</h5>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Joined</th>
-                            <th>Total Chats</th>
-                            <th>Last Active</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentUsersTable">
-                    </tbody>
-                </table>
+            <div class="stat-card">
+                <h3>Active Chats</h3>
+                <div class="value" id="activeChats">-</div>
             </div>
+            <div class="stat-card">
+                <h3>Total Messages</h3>
+                <div class="value" id="totalMessages">-</div>
+            </div>
+        </div>
 
-            <!-- Recent Conversations Table -->
-            <div class="table-container">
-                <h5 class="mb-3">Recent Conversations</h5>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Message</th>
-                            <th>Response</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentConversationsTable">
-                    </tbody>
-                </table>
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <h2>Recent Activity</h2>
+            <div id="activityTable">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Check authentication on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        // Check authentication
+        function checkAuth() {
             const token = localStorage.getItem('adminToken');
             if (!token) {
                 window.location.href = 'index.html';
                 return;
             }
-            loadDashboardData();
-        });
-
-        async function loadDashboardData() {
-            const token = localStorage.getItem('adminToken');
-            const loading = document.getElementById('loading');
-            const errorAlert = document.getElementById('errorAlert');
-            const dashboardContent = document.getElementById('dashboardContent');
-
-            loading.style.display = 'block';
-            errorAlert.style.display = 'none';
-            dashboardContent.style.opacity = '0.5';
-
-            try {
-                // Load statistics
-                const statsResponse = await fetch('/api/admin/stats', {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!statsResponse.ok) {
-                    if (statsResponse.status === 401) {
-                        localStorage.removeItem('adminToken');
-                        window.location.href = 'index.html';
-                        return;
-                    }
-                    throw new Error('Failed to load stats');
-                }
-
-                const stats = await statsResponse.json();
-                
-                // Update stats cards
-                document.getElementById('totalUsers').textContent = stats.total_users;
-                document.getElementById('activeUsers').textContent = stats.active_users;
-                document.getElementById('totalConversations').textContent = stats.total_conversations;
-                document.getElementById('avgResponseTime').textContent = stats.avg_response_time + 's';
-
-                // Load recent users
-                const usersResponse = await fetch('/api/admin/recent-users', {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!usersResponse.ok) throw new Error('Failed to load users');
-                const users = await usersResponse.json();
-                
-                // Update users table
-                const usersTable = document.getElementById('recentUsersTable');
-                usersTable.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${escapeHtml(user.name)}</td>
-                        <td>${escapeHtml(user.phone)}</td>
-                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
-                        <td>${user.total_chats}</td>
-                        <td>${new Date(user.last_active).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-
-                // Load recent conversations
-                const conversationsResponse = await fetch('/api/admin/recent-conversations', {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!conversationsResponse.ok) throw new Error('Failed to load conversations');
-                const conversations = await conversationsResponse.json();
-                
-                // Update conversations table
-                const conversationsTable = document.getElementById('recentConversationsTable');
-                conversationsTable.innerHTML = conversations.map(conv => `
-                    <tr>
-                        <td>${escapeHtml(conv.user_name)}</td>
-                        <td>${escapeHtml(conv.message)}</td>
-                        <td>${escapeHtml(conv.response)}</td>
-                        <td>${new Date(conv.timestamp).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                errorAlert.style.display = 'block';
-            } finally {
-                loading.style.display = 'none';
-                dashboardContent.style.opacity = '1';
-            }
+            return token;
         }
 
-        function handleLogout() {
+        // Logout function
+        function logout() {
             localStorage.removeItem('adminToken');
             window.location.href = 'index.html';
         }
 
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        // Fetch dashboard data
+        async function fetchDashboardData() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch('https://chatbot-eight-theta-90.vercel.app/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard data');
+                }
+
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to load dashboard data');
+            }
         }
 
-        // Refresh dashboard data every 30 seconds
-        setInterval(loadDashboardData, 30000);
+        // Update dashboard with data
+        function updateDashboard(data) {
+            // Update stats
+            document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+            document.getElementById('activeChats').textContent = data.activeChats || 0;
+            document.getElementById('totalMessages').textContent = data.totalMessages || 0;
+
+            // Update activity table
+            const activityTable = document.getElementById('activityTable');
+            if (data.recentActivity && data.recentActivity.length > 0) {
+                activityTable.innerHTML = `
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Activity</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.recentActivity.map(activity => `
+                                <tr>
+                                    <td>${activity.user}</td>
+                                    <td>${activity.action}</td>
+                                    <td>${new Date(activity.timestamp).toLocaleString()}</td>
+                                    <td>
+                                        <span class="status-badge ${activity.status === 'active' ? 'status-active' : 'status-pending'}">
+                                            ${activity.status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                activityTable.innerHTML = '<p style="text-align: center; color: var(--text-light);">No recent activity</p>';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const activityTable = document.getElementById('activityTable');
+            activityTable.innerHTML = `
+                <div style="text-align: center; color: #dc2626; padding: 20px;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            fetchDashboardData();
+            
+            // Refresh data every 30 seconds
+            setInterval(fetchDashboardData, 30000);
+        });
     </script>
 </body>
 </html>
