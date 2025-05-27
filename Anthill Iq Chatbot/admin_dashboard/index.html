@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Anthill IQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <style>
         :root {
             --primary: #03ab14;
             --primary-dark: #028610;
+            --primary-light: #e6f7e8;
             --text-dark: #1e293b;
             --text-light: #64748b;
             --white: #ffffff;
@@ -20,7 +23,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
@@ -28,21 +31,53 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             padding: 20px;
         }
 
         .login-container {
+            display: flex;
             background: var(--white);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             width: 100%;
-            max-width: 400px;
+            max-width: 900px;
+            min-height: 500px;
+        }
+
+        .login-image {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .login-image h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .login-image p {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .login-form {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .login-header {
-            text-align: center;
             margin-bottom: 30px;
         }
 
@@ -59,6 +94,7 @@
 
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .form-group label {
@@ -68,9 +104,16 @@
             margin-bottom: 8px;
         }
 
+        .form-group i {
+            position: absolute;
+            left: 12px;
+            top: 38px;
+            color: var(--text-light);
+        }
+
         .form-group input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 12px 12px 40px;
             border: 1px solid var(--gray-200);
             border-radius: 8px;
             font-size: 14px;
@@ -93,10 +136,12 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
         .login-button:hover {
             background: var(--primary-dark);
+            transform: translateY(-1px);
         }
 
         .error-message {
@@ -104,33 +149,52 @@
             font-size: 14px;
             margin-top: 8px;
             display: none;
+            text-align: center;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .login-container {
-                padding: 20px;
+                flex-direction: column;
+            }
+
+            .login-image {
+                padding: 30px;
+                min-height: 200px;
+            }
+
+            .login-form {
+                padding: 30px;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <h1>Admin Login</h1>
-            <p>Welcome back! Please login to your account.</p>
+        <div class="login-image">
+            <i class="fas fa-robot" style="font-size: 48px; margin-bottom: 20px;"></i>
+            <h2>Welcome to Anthill IQ</h2>
+            <p>Your intelligent chatbot management system</p>
         </div>
-        <form id="loginForm" onsubmit="return handleLogin(event)">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+        <div class="login-form">
+            <div class="login-header">
+                <h1>Admin Login</h1>
+                <p>Please enter your credentials to continue</p>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="error-message" id="errorMessage"></div>
-            <button type="submit" class="login-button">Login</button>
-        </form>
+            <form id="loginForm" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="error-message" id="errorMessage"></div>
+                <button type="submit" class="login-button">Sign In</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -140,8 +204,12 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
+            const loginButton = document.querySelector('.login-button');
 
             try {
+                loginButton.disabled = true;
+                loginButton.textContent = 'Signing in...';
+
                 const response = await fetch('https://chatbot-eight-theta-90.vercel.app/api/admin/login', {
                     method: 'POST',
                     headers: {
@@ -153,9 +221,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Store the token
                     localStorage.setItem('adminToken', data.token);
-                    // Redirect to dashboard
                     window.location.href = 'dashboard.html';
                 } else {
                     errorMessage.textContent = data.message || 'Invalid credentials';
@@ -164,6 +230,9 @@
             } catch (error) {
                 errorMessage.textContent = 'An error occurred. Please try again.';
                 errorMessage.style.display = 'block';
+            } finally {
+                loginButton.disabled = false;
+                loginButton.textContent = 'Sign In';
             }
 
             return false;
