@@ -15,12 +15,13 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             line-height: 1.6;
-            color: var(--text-dark); /* Use text-dark variable */
+            color: var(--text-dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: transparent; /* Ensure body background is transparent */
-             height: 100vh; /* Make body take full viewport height */
-             overflow: hidden; /* Hide body scrollbar if content exceeds viewport */
+            background-color: transparent; /* Essential: Body background in iframe should be transparent */
+            height: 100%; /* Body fills the iframe */
+            width: 100%; /* Body fills the iframe */
+            overflow: hidden; /* Hide body scrollbar */
         }
 
         /* Base responsive variables */
@@ -32,234 +33,260 @@
             --shadow-dark: rgba(3, 171, 20, 0.3);
             --text-dark: #1e293b;
             --text-light: #64748b;
-            --bg-light: #f8fafc; /* Light background for chat area */
-            --bg-white: #ffffff; /* White background for elements */
-            --border-color: #e2e8f0; /* Standard border color */
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
             --transition-fast: all 0.2s ease-in-out;
-            --transition-medium: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Used for window animation */
-            --chat-window-width: min(380px, 90vw);
-            --chat-window-height: min(550px, 80vh);
-            --chat-toggle-size: min(64px, 15vw);
+            --transition-medium: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Desktop / Larger Screen Variables */
+            --chat-window-width-desktop: 380px;
+            --chat-window-height-desktop: 550px;
+            --chat-toggle-size-desktop: 64px;
+            --spacing-desktop-lg: 24px;
+            --spacing-desktop-md: 16px;
+            --spacing-desktop-sm: 12px;
+
+            /* Mobile / Smaller Screen Variables (will be overridden in media query) */
+            --chat-window-width-mobile: 90vw;
+            --chat-window-height-mobile: 70vh;
+            --chat-toggle-size-mobile: 56px;
+            --spacing-mobile-lg: 16px;
+            --spacing-mobile-md: 12px;
+            --spacing-mobile-sm: 8px;
+
+
             --message-max-width: 85%;
             --border-radius-lg: 20px;
-            --border-radius-md: 12px; /* New medium border radius */
-            --border-radius-sm: 8px;  /* New small border radius */
-            --spacing-lg: 24px; /* Increased spacing */
-            --spacing-md: 16px;
-            --spacing-sm: 12px;
-            --font-size-lg: clamp(18px, 2.5vw, 22px); /* Larger font for main heading */
-            --font-size-md: clamp(14px, 1.8vw, 16px); /* Standard text size */
-            --font-size-sm: clamp(12px, 1.6vw, 14px); /* Small text size */
-             --font-size-heading: clamp(16px, 2vw, 18px); /* Font size for section headings */
+            --border-radius-md: 12px;
+            --border-radius-sm: 8px;
+
+            --font-size-lg: clamp(18px, 2.5vw, 22px);
+            --font-size-md: clamp(14px, 1.8vw, 16px);
+            --font-size-sm: clamp(12px, 1.6vw, 14px);
+            --font-size-heading: clamp(16px, 2vw, 18px);
         }
 
         /* Main widget container */
+        /* Positions the entire widget (button and window) relative to the iframe viewport */
         .chat-widget {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            position: fixed;
-            bottom: var(--spacing-lg);
-            right: var(--spacing-lg);
+            position: fixed; /* Widget is fixed relative to the iframe viewport */
+            bottom: var(--spacing-desktop-lg);
+            right: var(--spacing-desktop-lg);
             z-index: 1000;
-            /* Ensure the container itself doesn't block clicks */
-            pointer-events: none; /* Clicks pass through the container */
-             /* Added size and display to the container */
-            width: var(--chat-window-width); /* Container width */
-            height: calc(var(--chat-window-height) + var(--chat-toggle-size) + 20px); /* Container height to accommodate window and button */
-            display: flex; /* Use flex to position button and window */
-            flex-direction: column;
-             align-items: flex-end; /* Align items to the right */
-             justify-content: flex-end; /* Align items to the bottom */
+            /* Size is determined by the chat window and button positioning */
+            width: auto;
+            height: auto;
+             pointer-events: none; /* Clicks pass through the widget container itself */
         }
 
-        .chat-widget > * {
-            pointer-events: auto; /* Re-enable clicks for children (button and window) */
-        }
+         .chat-widget > * {
+             pointer-events: auto; /* Re-enable clicks for children */
+         }
 
 
         /* Chat toggle button */
         .chat-toggle {
-            width: var(--chat-toggle-size);
-            height: var(--chat-toggle-size);
+            width: var(--chat-toggle-size-desktop);
+            height: var(--chat-toggle-size-desktop);
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); /* More defined gradient */
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            box-shadow: 0 6px 20px var(--shadow-light); /* Enhanced shadow */
+            box-shadow: 0 6px 20px var(--shadow-light);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition-fast); /* Faster transition for hover */
-            position: relative;
+            transition: var(--transition-fast);
+            position: fixed; /* Button is fixed relative to the iframe viewport */
+            bottom: var(--spacing-desktop-lg);
+            right: var(--spacing-desktop-lg);
             overflow: hidden;
-            /* Align button within the widget container */
-            margin-top: auto; /* Push button to the bottom if container is flex-col */
-            margin-bottom: 10px; /* Space between button and window */
+             z-index: 1001; /* Ensure button is above the window when both are fixed */
         }
 
         .chat-toggle:hover {
-            transform: scale(1.08) translateY(-3px); /* More pronounced hover effect */
-            box-shadow: 0 12px 30px var(--shadow-dark); /* Darker shadow on hover */
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 12px 30px var(--shadow-dark);
         }
 
         .chat-toggle:active {
-             transform: scale(1.02) translateY(-1px); /* Slight press effect */
+             transform: scale(1.02) translateY(-1px);
              box-shadow: 0 8px 25px var(--shadow-dark);
         }
 
          .chat-toggle svg {
-             width: calc(var(--chat-toggle-size) * 0.5); /* Scale SVG with button size */
-             height: calc(var(--chat-toggle-size) * 0.5);
+             width: calc(var(--chat-toggle-size-desktop) * 0.5); /* Scale SVG with desktop button size */
+             height: calc(var(--chat-toggle-size-desktop) * 0.5);
              fill: white;
          }
 
         /* Chat window */
         .chat-window {
-            /* Removed fixed positioning here as it's relative to the chat-widget container now */
-            position: absolute; /* Position absolute relative to the chat-widget container */
-            bottom: calc(var(--chat-toggle-size) + 10px); /* Position above button within container */
-            right: 0; /* Align to the right of the container */
-            width: var(--chat-window-width);
-            height: var(--chat-window-height);
+            position: fixed; /* Window is fixed relative to the iframe viewport */
+            bottom: calc(var(--spacing-desktop-lg) + var(--chat-toggle-size-desktop) + 10px); /* Position above button */
+            right: var(--spacing-desktop-lg);
+            width: var(--chat-window-width-desktop); /* Desktop width */
+            height: var(--chat-window-height-desktop); /* Desktop height */
             border-radius: var(--border-radius-lg);
-            background-color: var(--bg-white); /* Explicitly white */
+            background-color: var(--bg-white);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            transition: var(--transition-medium); /* Smooth window transition */
+            overflow: hidden; /* Crucial for clipping content to rounded corners */
+            transition: var(--transition-medium);
             transform-origin: bottom right;
 
-            /* Initial state - Use visibility and opacity for smoother transition */
+            /* Initial state */
             opacity: 0;
             visibility: hidden;
             transform: scale(0.8);
-            pointer-events: none; /* Cannot interact when hidden */
+            pointer-events: none;
         }
 
         .chat-window.visible { /* Class to show the window */
             opacity: 1;
             visibility: visible;
             transform: scale(1);
-            pointer-events: auto; /* Can interact when visible */
+            pointer-events: auto;
         }
 
         /* Registration form */
         .registration-form {
-            padding: var(--spacing-lg);
-            background: linear-gradient(to bottom, var(--bg-white) 0%, var(--bg-light) 100%); /* Subtle gradient background */
+            padding: var(--spacing-desktop-lg);
+            background: linear-gradient(to bottom, var(--bg-white) 0%, var(--bg-light) 100%);
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-md);
+            gap: var(--spacing-desktop-md);
             height: 100%;
-            justify-content: center; /* Vertically center content */
-            align-items: center; /* Horizontally center content */
-            text-align: center; /* Center text */
+            width: 100%; /* Fill chat window width */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow-y: auto;
+             /* Explicitly set top border radius to match parent */
+             border-top-left-radius: var(--border-radius-lg);
+             border-top-right-radius: var(--border-radius-lg);
         }
+
+         .registration-form::-webkit-scrollbar { width: 0; }
+         .registration-form { -ms-overflow-style: none; scrollbar-width: none; }
 
         .registration-form h3 {
             color: var(--text-dark);
-            font-size: var(--font-size-lg); /* Larger main heading */
-            margin-bottom: var(--spacing-sm);
-            font-weight: 800; /* Extra bolder heading */
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-desktop-sm);
+            font-weight: 800;
+             line-height: 1.2;
         }
 
         .registration-form p {
             color: var(--text-light);
             font-size: var(--font-size-md);
-            margin-bottom: var(--spacing-md);
-            max-width: 300px; /* Limit paragraph width for readability */
+            margin-bottom: var(--spacing-desktop-md);
+            max-width: 300px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: var(--spacing-sm); /* Added margin bottom */
-            width: 100%; /* Take full width of container */
-            max-width: 300px; /* Limit form group width */
-            text-align: left; /* Align label and input left */
+            margin-bottom: var(--spacing-desktop-md);
+            width: 100%;
+            max-width: 300px;
+            text-align: left;
         }
 
         .form-group label {
-            color: var(--text-dark); /* Label color */
+            color: var(--text-dark);
             font-size: var(--font-size-sm);
-            font-weight: 700; /* Bolder label */
-            margin-left: 4px; /* Slight indent for label */
+            font-weight: 700;
+            margin-left: 4px;
         }
 
         .form-group input {
-            padding: 12px 15px; /* Increased padding */
+            padding: 12px 15px;
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-sm);
             font-size: var(--font-size-md);
             transition: var(--transition-fast);
-            background: var(--bg-white); /* White background for input */
-             width: 100%; /* Full width */
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); /* Subtle inset shadow */
+            background: var(--bg-white);
+             width: 100%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-light); /* Lighter shadow for focus */
-            background: var(--bg-white); /* White background on focus */
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: var(--bg-white);
         }
 
-         /* Placeholder text style */
          .form-group input::placeholder {
              color: var(--text-light);
-             opacity: 0.7; /* Slightly less opaque */
-             font-size: var(--font-size-sm); /* Smaller placeholder text */
+             opacity: 0.7;
+             font-size: var(--font-size-sm);
          }
 
-
         .submit-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); /* Gradient button */
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border: none;
-            padding: 14px 20px; /* Increased padding */
+            padding: 14px 20px;
             border-radius: var(--border-radius-sm);
             font-size: var(--font-size-md);
             cursor: pointer;
             transition: var(--transition-fast);
-            margin-top: var(--spacing-md); /* Adjusted margin top */
-            font-weight: 600; /* Bolder text */
+            margin-top: var(--spacing-desktop-md);
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-             width: 100%; /* Full width button */
-             max-width: 300px; /* Limit button width */
-             text-transform: uppercase; /* Uppercase text */
-             letter-spacing: 0.5px; /* Added letter spacing */
+             width: 100%;
+             max-width: 300px;
+             text-transform: uppercase;
+             letter-spacing: 0.5px;
         }
 
         .submit-button:hover {
-            background: linear-gradient(135deg, var(--primary-dark), #015a0a); /* Darker gradient on hover */
-            transform: translateY(-2px); /* Lift effect */
-            box-shadow: 0 8px 20px var(--shadow-dark); /* Enhanced shadow on hover */
+            background: linear-gradient(135deg, var(--primary-dark), #015a0a);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--shadow-dark);
         }
 
         .submit-button:active {
-            transform: translateY(0); /* Press effect */
-            box-shadow: 0 4px 10px var(--shadow-light);
+            transform: translateY(0);
+            box-shadow: 4px 10px var(--shadow-light); /* Corrected shadow */
         }
 
         /* Chat interface */
+        #chat-interface {
+             display: none;
+             height: 100%;
+             flex-direction: column;
+             width: 100%;
+        }
+
         .chat-header {
-            padding: var(--spacing-md);
+            padding: var(--spacing-desktop-md);
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top-left-radius: var(--border-radius-lg); /* Match window border radius */
-            border-top-right-radius: var(--border-radius-lg);
+            border-top-left-radius: var(--border-radius-lg); /* Explicitly match window radius */
+            border-top-right-radius: var(--border-radius-lg); /* Explicitly match window radius */
+             flex-shrink: 0;
         }
 
         .chat-header h3 {
-            font-size: var(--font-size-heading); /* Consistent heading size */
+            font-size: var(--font-size-heading);
             font-weight: 600;
         }
 
@@ -275,78 +302,68 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition-fast);
-             font-size: var(--font-size-md); /* Size for the 'x' */
+             font-size: var(--font-size-md);
+             flex-shrink: 0;
         }
 
         .close-button:hover {
-            background: rgba(255, 255, 255, 0.4); /* More visible hover */
-            transform: rotate(90deg) scale(1.1); /* Rotate and scale */
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(90deg) scale(1.1);
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: var(--spacing-md);
+            padding: var(--spacing-desktop-md);
             background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-sm);
-             /* Custom scrollbar */
+            gap: var(--spacing-desktop-sm);
              scrollbar-width: thin;
              scrollbar-color: var(--primary-color) var(--bg-light);
         }
 
-        .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: var(--bg-light);
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background-color: var(--primary-color);
-            border-radius: 10px;
-            border: 2px solid var(--bg-light);
-        }
+        .chat-messages::-webkit-scrollbar { width: 8px; }
+        .chat-messages::-webkit-scrollbar-track { background: var(--bg-light); }
+        .chat-messages::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 10px; border: 2px solid var(--bg-light); }
 
 
         .message {
             max-width: var(--message-max-width);
-            padding: var(--spacing-sm) var(--spacing-md); /* Adjusted padding */
-            border-radius: var(--border-radius-md); /* Medium border radius */
+            padding: var(--spacing-desktop-sm) var(--spacing-desktop-md);
+            border-radius: var(--border-radius-md);
             font-size: var(--font-size-md);
-            animation: fadeIn 0.3s ease forwards; /* Use forwards to keep final state */
+            animation: fadeIn 0.3s ease forwards;
             line-height: 1.5;
-            word-wrap: break-word; /* Prevent long words from overflowing */
-             white-space: pre-wrap; /* Preserve whitespace and break lines */
+            word-wrap: break-word;
+             white-space: pre-wrap;
         }
 
         .bot-message {
-            background-color: var(--bg-white); /* White background */
-            color: var(--text-dark); /* Dark text */
+            background-color: var(--bg-white);
+            color: var(--text-dark);
             align-self: flex-start;
-            border-bottom-left-radius: var(--border-radius-sm); /* Small corner radius */
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            border-bottom-left-radius: var(--border-radius-sm);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         .user-message {
             background-color: var(--primary-color);
             color: white;
             align-self: flex-end;
-            border-bottom-right-radius: var(--border-radius-sm); /* Small corner radius */
+            border-bottom-right-radius: var(--border-radius-sm);
         }
 
         /* Typing indicator */
         .typing-indicator {
             display: flex;
             align-items: center;
-            gap: 6px; /* Increased gap */
-            padding: var(--spacing-sm) var(--spacing-md);
+            gap: 6px;
+            padding: var(--spacing-desktop-sm) var(--spacing-desktop-md);
             background: var(--bg-white);
             border-radius: var(--border-radius-md);
             width: fit-content;
-            margin: var(--spacing-sm) 0;
+            margin: var(--spacing-desktop-sm) 0;
             animation: fadeIn 0.3s ease forwards;
              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
@@ -369,12 +386,13 @@
         }
 
         .chat-input-area {
-            padding: var(--spacing-md);
-            background: var(--bg-white); /* White background */
+            padding: var(--spacing-desktop-md);
+            background: var(--bg-white);
             border-top: 1px solid var(--border-color);
             display: flex;
-            gap: var(--spacing-sm);
-            align-items: flex-end; /* Align items to the bottom */
+            gap: var(--spacing-desktop-sm);
+            align-items: flex-end;
+             flex-shrink: 0;
         }
 
         .chat-input {
@@ -388,7 +406,10 @@
             min-height: 44px;
             background: var(--bg-light);
             transition: var(--transition-fast);
-             line-height: 1.5; /* Consistent line height */
+             line-height: 1.5;
+             -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .chat-input:focus {
@@ -407,7 +428,7 @@
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border: none;
-            width: 48px; /* Slightly larger button */
+            width: 48px;
             height: 48px;
             border-radius: 50%;
             cursor: pointer;
@@ -415,31 +436,30 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition-fast);
-             flex-shrink: 0; /* Prevent shrinking */
+             flex-shrink: 0;
         }
 
         .send-button:hover {
             background: linear-gradient(135deg, var(--primary-dark), #015a0a);
-            transform: scale(1.1); /* More pronounced scale */
-             box-shadow: 0 4px 12px var(--shadow-dark);
+            transform: scale(1.1);
+             box-shadow: 4px 12px var(--shadow-dark); /* Corrected shadow */
         }
 
         .send-button:active {
             transform: scale(0.95);
-             box-shadow: 0 2px 8px var(--shadow-light);
+             box-shadow: 2px 8px var(--shadow-light); /* Corrected shadow */
         }
 
          .send-button svg {
-             width: 24px; /* Larger icon */
+             width: 24px;
              height: 24px;
          }
-
 
         /* Loading spinner */
         .loading-spinner {
             width: 20px;
             height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.5); /* Slightly more visible spinner border */
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s linear infinite;
@@ -460,72 +480,78 @@
             }
         }
 
-        /* Mobile responsiveness */
+        /* Mobile responsiveness WITHIN the iframe */
+        /* These styles apply when the *iframe itself* is <= 480px wide */
         @media (max-width: 480px) {
-            .chat-widget {
-                 bottom: 0;
-                 right: 0;
-                 width: 100vw;
-                 height: 100vh;
-                 justify-content: flex-start; /* Align items to the top */
-                 align-items: center; /* Center items horizontally */
+            :root {
+                 /* Override variables for mobile */
+                --chat-window-width-desktop: var(--chat-window-width-mobile);
+                --chat-window-height-desktop: var(--chat-window-height-mobile);
+                --chat-toggle-size-desktop: var(--chat-toggle-size-mobile);
+                --spacing-desktop-lg: var(--spacing-mobile-lg);
+                --spacing-desktop-md: var(--spacing-mobile-md);
+                --spacing-desktop-sm: var(--spacing-mobile-sm);
             }
 
+            /* Chat widget container remains fixed */
+            .chat-widget {
+                position: fixed; /* Stays fixed relative to iframe viewport */
+                bottom: var(--spacing-desktop-lg); /* Use mobile spacing */
+                right: var(--spacing-desktop-lg); /* Use mobile spacing */
+                 /* Size is now determined by the window and button fixed positioning */
+                 width: auto;
+                 height: auto;
+            }
+
+            /* Chat toggle button remains fixed, uses mobile spacing and size */
             .chat-toggle {
-                position: fixed; /* Button stays fixed on mobile full screen */
-                bottom: var(--spacing-md);
-                right: var(--spacing-md);
+                width: var(--chat-toggle-size-desktop);
+                height: var(--chat-toggle-size-desktop);
+                bottom: var(--spacing-desktop-lg);
+                right: var(--spacing-desktop-lg);
                  margin: 0; /* Remove margin */
             }
 
+             .chat-toggle svg {
+                 width: calc(var(--chat-toggle-size-desktop) * 0.5); /* Scale SVG with mobile button size */
+                 height: calc(var(--chat-toggle-size-desktop) * 0.5);
+             }
+
+
+            /* Chat window remains fixed, uses mobile size and position */
             .chat-window {
-                position: static; /* Window takes up space in the flex container */
-                width: 100vw;
-                height: calc(100vh - var(--chat-toggle-size) - 20px); /* Fill remaining height, roughly */
-                bottom: auto;
-                right: auto;
-                border-radius: 0;
-                box-shadow: none; /* No shadow on full screen */
-                 flex: 1; /* Take up remaining space */
+                position: fixed;
+                bottom: calc(var(--spacing-desktop-lg) + var(--chat-toggle-size-desktop) + 10px); /* Position above button using mobile spacing */
+                right: var(--spacing-desktop-lg); /* Use mobile spacing */
+                width: var(--chat-window-width-desktop); /* Use mobile width variable */
+                height: var(--chat-window-height-desktop); /* Use mobile height variable */
+                border-radius: var(--border-radius-lg); /* Keep rounded corners */
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Slightly less shadow than desktop */
             }
 
 
+            /* Adjust padding and gaps for mobile within the window */
             .registration-form,
             .chat-header,
-            .chat-input-area,
-            .chat-messages {
-                padding: var(--spacing-md); /* Consistent padding */
+            .chat-input-area {
+                padding: var(--spacing-desktop-md);
             }
 
             .chat-messages {
-                 gap: var(--spacing-sm);
+                 padding: var(--spacing-desktop-md);
+                 gap: var(--spacing-desktop-sm);
             }
 
             .message {
-                 padding: var(--spacing-sm);
+                 padding: var(--spacing-desktop-sm);
             }
-        }
 
-        /* Loading state for registration */
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .loading .submit-button {
-            position: relative;
-            color: transparent;
-        }
-
-        .loading .submit-button::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
+             .form-group {
+                 max-width: 90%; /* Adjust max width for form on small screens */
+             }
+             .submit-button {
+                 max-width: 90%; /* Adjust max width for button on small screens */
+             }
         }
     </style>
 </head>
@@ -545,7 +571,7 @@
         <div id="chat-window" class="chat-window hidden">
             <!-- Registration form -->
             <div id="registration-form" class="registration-form">
-                <h3>Welcome to Anthill IQ Chat! </h3>
+                <h3>Welcome to Anthill IQ Chat! 👋</h3>
                 <p>Please provide your details to start chatting</p>
 
                 <div class="form-group">
@@ -564,7 +590,7 @@
             </div>
 
             <!-- Chat interface (initially hidden) -->
-            <div id="chat-interface" style="display: none; height: 100%; flex-direction: column;">
+            <div id="chat-interface" style="display: none; height: 100%; flex-direction: column; width: 100%;">
             <div class="chat-header">
                 <h3>Anthill IQ Assistant</h3>
                 <button id="close-chat" class="close-button">×</button>
@@ -702,7 +728,7 @@
         function showChatInterface() {
             registrationForm.style.display = 'none';
             chatInterface.style.display = 'flex';
-            addMessage('Hello! I\'m the Anthill IQ Assistant. How can I help you today?', 'bot');
+            addMessage('Hello! 👋 I\'m the Anthill IQ Assistant. How can I help you today?', 'bot');
         }
 
         // Toggle chat window visibility
