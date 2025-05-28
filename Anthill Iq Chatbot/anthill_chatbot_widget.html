@@ -15,9 +15,12 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: var(--text-dark); /* Use text-dark variable */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: transparent; /* Ensure body background is transparent */
+             height: 100vh; /* Make body take full viewport height */
+             overflow: hidden; /* Hide body scrollbar if content exceeds viewport */
         }
 
         /* Base responsive variables */
@@ -29,20 +32,25 @@
             --shadow-dark: rgba(3, 171, 20, 0.3);
             --text-dark: #1e293b;
             --text-light: #64748b;
-            --bg-light: #f8fafc;
-            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --bg-light: #f8fafc; /* Light background for chat area */
+            --bg-white: #ffffff; /* White background for elements */
+            --border-color: #e2e8f0; /* Standard border color */
+            --transition-fast: all 0.2s ease-in-out;
+            --transition-medium: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Used for window animation */
             --chat-window-width: min(380px, 90vw);
             --chat-window-height: min(550px, 80vh);
             --chat-toggle-size: min(64px, 15vw);
             --message-max-width: 85%;
             --border-radius-lg: 20px;
-            --border-radius-sm: 15px;
-            --spacing-lg: 20px;
+            --border-radius-md: 12px; /* New medium border radius */
+            --border-radius-sm: 8px;  /* New small border radius */
+            --spacing-lg: 24px; /* Increased spacing */
             --spacing-md: 16px;
             --spacing-sm: 12px;
-            --font-size-lg: clamp(14px, 2vw, 16px);
-            --font-size-md: clamp(13px, 1.8vw, 15px);
-            --font-size-sm: clamp(12px, 1.6vw, 14px);
+            --font-size-lg: clamp(18px, 2.5vw, 22px); /* Larger font for main heading */
+            --font-size-md: clamp(14px, 1.8vw, 16px); /* Standard text size */
+            --font-size-sm: clamp(12px, 1.6vw, 14px); /* Small text size */
+             --font-size-heading: clamp(16px, 2vw, 18px); /* Font size for section headings */
         }
 
         /* Main widget container */
@@ -52,110 +60,190 @@
             bottom: var(--spacing-lg);
             right: var(--spacing-lg);
             z-index: 1000;
+            /* Ensure the container itself doesn't block clicks */
+            pointer-events: none; /* Clicks pass through the container */
+             /* Added size and display to the container */
+            width: var(--chat-window-width); /* Container width */
+            height: calc(var(--chat-window-height) + var(--chat-toggle-size) + 20px); /* Container height to accommodate window and button */
+            display: flex; /* Use flex to position button and window */
+            flex-direction: column;
+             align-items: flex-end; /* Align items to the right */
+             justify-content: flex-end; /* Align items to the bottom */
         }
+
+        .chat-widget > * {
+            pointer-events: auto; /* Re-enable clicks for children (button and window) */
+        }
+
 
         /* Chat toggle button */
         .chat-toggle {
             width: var(--chat-toggle-size);
             height: var(--chat-toggle-size);
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); /* More defined gradient */
             color: white;
             border: none;
-            box-shadow: 0 4px 20px var(--shadow-light);
+            box-shadow: 0 6px 20px var(--shadow-light); /* Enhanced shadow */
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition);
+            transition: var(--transition-fast); /* Faster transition for hover */
             position: relative;
             overflow: hidden;
+            /* Align button within the widget container */
+            margin-top: auto; /* Push button to the bottom if container is flex-col */
+            margin-bottom: 10px; /* Space between button and window */
         }
 
         .chat-toggle:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 10px 25px var(--shadow-dark);
+            transform: scale(1.08) translateY(-3px); /* More pronounced hover effect */
+            box-shadow: 0 12px 30px var(--shadow-dark); /* Darker shadow on hover */
         }
+
+        .chat-toggle:active {
+             transform: scale(1.02) translateY(-1px); /* Slight press effect */
+             box-shadow: 0 8px 25px var(--shadow-dark);
+        }
+
+         .chat-toggle svg {
+             width: calc(var(--chat-toggle-size) * 0.5); /* Scale SVG with button size */
+             height: calc(var(--chat-toggle-size) * 0.5);
+             fill: white;
+         }
 
         /* Chat window */
         .chat-window {
-            position: fixed;
-            bottom: calc(var(--spacing-lg) + var(--chat-toggle-size) + 10px);
-            right: var(--spacing-lg);
+            /* Removed fixed positioning here as it's relative to the chat-widget container now */
+            position: absolute; /* Position absolute relative to the chat-widget container */
+            bottom: calc(var(--chat-toggle-size) + 10px); /* Position above button within container */
+            right: 0; /* Align to the right of the container */
             width: var(--chat-window-width);
             height: var(--chat-window-height);
             border-radius: var(--border-radius-lg);
-            background-color: white;
+            background-color: var(--bg-white); /* Explicitly white */
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: var(--transition);
+            transition: var(--transition-medium); /* Smooth window transition */
             transform-origin: bottom right;
-        }
 
-        .hidden {
+            /* Initial state - Use visibility and opacity for smoother transition */
             opacity: 0;
             visibility: hidden;
             transform: scale(0.8);
-            pointer-events: none;
+            pointer-events: none; /* Cannot interact when hidden */
+        }
+
+        .chat-window.visible { /* Class to show the window */
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            pointer-events: auto; /* Can interact when visible */
         }
 
         /* Registration form */
         .registration-form {
             padding: var(--spacing-lg);
-            background: white;
+            background: linear-gradient(to bottom, var(--bg-white) 0%, var(--bg-light) 100%); /* Subtle gradient background */
             display: flex;
             flex-direction: column;
             gap: var(--spacing-md);
             height: 100%;
+            justify-content: center; /* Vertically center content */
+            align-items: center; /* Horizontally center content */
+            text-align: center; /* Center text */
         }
 
         .registration-form h3 {
             color: var(--text-dark);
-            font-size: var(--font-size-lg);
+            font-size: var(--font-size-lg); /* Larger main heading */
             margin-bottom: var(--spacing-sm);
+            font-weight: 800; /* Extra bolder heading */
+        }
+
+        .registration-form p {
+            color: var(--text-light);
+            font-size: var(--font-size-md);
+            margin-bottom: var(--spacing-md);
+            max-width: 300px; /* Limit paragraph width for readability */
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
+            margin-bottom: var(--spacing-sm); /* Added margin bottom */
+            width: 100%; /* Take full width of container */
+            max-width: 300px; /* Limit form group width */
+            text-align: left; /* Align label and input left */
         }
 
         .form-group label {
-            color: var(--text-light);
+            color: var(--text-dark); /* Label color */
             font-size: var(--font-size-sm);
+            font-weight: 700; /* Bolder label */
+            margin-left: 4px; /* Slight indent for label */
         }
 
         .form-group input {
-            padding: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 12px 15px; /* Increased padding */
+            border: 1px solid var(--border-color);
             border-radius: var(--border-radius-sm);
             font-size: var(--font-size-md);
-            transition: all 0.2s;
+            transition: var(--transition-fast);
+            background: var(--bg-white); /* White background for input */
+             width: 100%; /* Full width */
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); /* Subtle inset shadow */
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--shadow-light);
+            box-shadow: 0 0 0 3px var(--primary-light); /* Lighter shadow for focus */
+            background: var(--bg-white); /* White background on focus */
         }
 
+         /* Placeholder text style */
+         .form-group input::placeholder {
+             color: var(--text-light);
+             opacity: 0.7; /* Slightly less opaque */
+             font-size: var(--font-size-sm); /* Smaller placeholder text */
+         }
+
+
         .submit-button {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); /* Gradient button */
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px 20px; /* Increased padding */
             border-radius: var(--border-radius-sm);
             font-size: var(--font-size-md);
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: auto;
+            transition: var(--transition-fast);
+            margin-top: var(--spacing-md); /* Adjusted margin top */
+            font-weight: 600; /* Bolder text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+             width: 100%; /* Full width button */
+             max-width: 300px; /* Limit button width */
+             text-transform: uppercase; /* Uppercase text */
+             letter-spacing: 0.5px; /* Added letter spacing */
         }
 
         .submit-button:hover {
-            background: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-dark), #015a0a); /* Darker gradient on hover */
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 8px 20px var(--shadow-dark); /* Enhanced shadow on hover */
+        }
+
+        .submit-button:active {
+            transform: translateY(0); /* Press effect */
+            box-shadow: 0 4px 10px var(--shadow-light);
         }
 
         /* Chat interface */
@@ -166,10 +254,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top-left-radius: var(--border-radius-lg); /* Match window border radius */
+            border-top-right-radius: var(--border-radius-lg);
         }
 
         .chat-header h3 {
-            font-size: var(--font-size-lg);
+            font-size: var(--font-size-heading); /* Consistent heading size */
             font-weight: 600;
         }
 
@@ -184,12 +274,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: var(--transition-fast);
+             font-size: var(--font-size-md); /* Size for the 'x' */
         }
 
         .close-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
+            background: rgba(255, 255, 255, 0.4); /* More visible hover */
+            transform: rotate(90deg) scale(1.1); /* Rotate and scale */
         }
 
         .chat-messages {
@@ -200,71 +291,162 @@
             display: flex;
             flex-direction: column;
             gap: var(--spacing-sm);
+             /* Custom scrollbar */
+             scrollbar-width: thin;
+             scrollbar-color: var(--primary-color) var(--bg-light);
         }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            border: 2px solid var(--bg-light);
+        }
+
 
         .message {
             max-width: var(--message-max-width);
-            padding: var(--spacing-sm);
-            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-sm) var(--spacing-md); /* Adjusted padding */
+            border-radius: var(--border-radius-md); /* Medium border radius */
             font-size: var(--font-size-md);
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.3s ease forwards; /* Use forwards to keep final state */
+            line-height: 1.5;
+            word-wrap: break-word; /* Prevent long words from overflowing */
+             white-space: pre-wrap; /* Preserve whitespace and break lines */
         }
 
         .bot-message {
-            background-color: white;
+            background-color: var(--bg-white); /* White background */
+            color: var(--text-dark); /* Dark text */
             align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-bottom-left-radius: var(--border-radius-sm); /* Small corner radius */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow */
         }
 
         .user-message {
             background-color: var(--primary-color);
             color: white;
             align-self: flex-end;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: var(--border-radius-sm); /* Small corner radius */
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px; /* Increased gap */
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--bg-white);
+            border-radius: var(--border-radius-md);
+            width: fit-content;
+            margin: var(--spacing-sm) 0;
+            animation: fadeIn 0.3s ease forwards;
+             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
         }
 
         .chat-input-area {
             padding: var(--spacing-md);
-            background: white;
-            border-top: 1px solid #e2e8f0;
+            background: var(--bg-white); /* White background */
+            border-top: 1px solid var(--border-color);
             display: flex;
             gap: var(--spacing-sm);
+            align-items: flex-end; /* Align items to the bottom */
         }
 
         .chat-input {
             flex: 1;
-            padding: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
             border-radius: var(--border-radius-sm);
             font-size: var(--font-size-md);
             resize: none;
             max-height: 100px;
             min-height: 44px;
+            background: var(--bg-light);
+            transition: var(--transition-fast);
+             line-height: 1.5; /* Consistent line height */
         }
 
         .chat-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--shadow-light);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: var(--bg-white);
         }
 
+         .chat-input::placeholder {
+             color: var(--text-light);
+             opacity: 0.8;
+         }
+
         .send-button {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 48px; /* Slightly larger button */
+            height: 48px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: var(--transition-fast);
+             flex-shrink: 0; /* Prevent shrinking */
         }
 
         .send-button:hover {
-            background: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-dark), #015a0a);
+            transform: scale(1.1); /* More pronounced scale */
+             box-shadow: 0 4px 12px var(--shadow-dark);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+             box-shadow: 0 2px 8px var(--shadow-light);
+        }
+
+         .send-button svg {
+             width: 24px; /* Larger icon */
+             height: 24px;
+         }
+
+
+        /* Loading spinner */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5); /* Slightly more visible spinner border */
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @keyframes fadeIn {
@@ -280,18 +462,70 @@
 
         /* Mobile responsiveness */
         @media (max-width: 480px) {
-            .chat-window {
-                width: 100vw;
-                height: 100vh;
-                bottom: 0;
-                right: 0;
-                border-radius: 0;
+            .chat-widget {
+                 bottom: 0;
+                 right: 0;
+                 width: 100vw;
+                 height: 100vh;
+                 justify-content: flex-start; /* Align items to the top */
+                 align-items: center; /* Center items horizontally */
             }
 
             .chat-toggle {
+                position: fixed; /* Button stays fixed on mobile full screen */
                 bottom: var(--spacing-md);
                 right: var(--spacing-md);
+                 margin: 0; /* Remove margin */
             }
+
+            .chat-window {
+                position: static; /* Window takes up space in the flex container */
+                width: 100vw;
+                height: calc(100vh - var(--chat-toggle-size) - 20px); /* Fill remaining height, roughly */
+                bottom: auto;
+                right: auto;
+                border-radius: 0;
+                box-shadow: none; /* No shadow on full screen */
+                 flex: 1; /* Take up remaining space */
+            }
+
+
+            .registration-form,
+            .chat-header,
+            .chat-input-area,
+            .chat-messages {
+                padding: var(--spacing-md); /* Consistent padding */
+            }
+
+            .chat-messages {
+                 gap: var(--spacing-sm);
+            }
+
+            .message {
+                 padding: var(--spacing-sm);
+            }
+        }
+
+        /* Loading state for registration */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .submit-button {
+            position: relative;
+            color: transparent;
+        }
+
+        .loading .submit-button::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
         }
     </style>
 </head>
@@ -311,20 +545,22 @@
         <div id="chat-window" class="chat-window hidden">
             <!-- Registration form -->
             <div id="registration-form" class="registration-form">
-                <h3>Welcome to Anthill IQ Chat! 👋</h3>
+                <h3>Welcome to Anthill IQ Chat! </h3>
                 <p>Please provide your details to start chatting</p>
-                
+
                 <div class="form-group">
                     <label for="user-name">Name</label>
                     <input type="text" id="user-name" placeholder="Enter your name" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="user-phone">Phone Number</label>
                     <input type="tel" id="user-phone" placeholder="Enter your phone number" required>
                 </div>
-                
-                <button id="start-chat" class="submit-button">Start Chatting</button>
+
+                <button id="start-chat" class="submit-button">
+                    <span>Start Chatting</span>
+                </button>
             </div>
 
             <!-- Chat interface (initially hidden) -->
@@ -348,7 +584,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         // Configuration
         const CONFIG = {
@@ -381,14 +617,19 @@
                 userData = JSON.parse(savedUserData);
                 showChatInterface();
             }
-            
+
             // Set up event listeners
             chatToggle.addEventListener('click', toggleChat);
             closeChat.addEventListener('click', closeWidget);
             sendMessage.addEventListener('click', handleSendMessage);
             chatInput.addEventListener('keypress', handleInputKeypress);
             startChatButton.addEventListener('click', handleRegistration);
-            
+
+            // Prevent clicks on the chat window from bubbling up and closing the window
+            chatWindow.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+
             // Auto-resize textarea
             chatInput.addEventListener('input', () => {
                 chatInput.style.height = 'auto';
@@ -411,6 +652,11 @@
                 return;
             }
 
+            // Add loading state
+            const startChatButton = document.getElementById('start-chat');
+            startChatButton.classList.add('loading');
+            startChatButton.disabled = true;
+
             try {
                 const response = await fetch(CONFIG.REGISTER_URL, {
                     method: 'POST',
@@ -426,10 +672,10 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    userData = { 
+                    userData = {
                         id: data.user_id,
-                        name: name, 
-                        phone: phone 
+                        name: name,
+                        phone: phone
                     };
                     localStorage.setItem('anthillChatUserData', JSON.stringify(userData));
                     showChatInterface();
@@ -439,6 +685,10 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Registration failed. Please try again.');
+            } finally {
+                // Remove loading state
+                startChatButton.classList.remove('loading');
+                startChatButton.disabled = false;
             }
         }
 
@@ -452,24 +702,32 @@
         function showChatInterface() {
             registrationForm.style.display = 'none';
             chatInterface.style.display = 'flex';
-            addMessage('Hello! 👋 I\'m the Anthill IQ Assistant. How can I help you today?', 'bot');
+            addMessage('Hello! I\'m the Anthill IQ Assistant. How can I help you today?', 'bot');
         }
 
         // Toggle chat window visibility
         function toggleChat() {
-            chatWindow.classList.toggle('hidden');
-            if (!chatWindow.classList.contains('hidden')) {
-                if (userData) {
+             // Check current display state and toggle explicitly
+            if (chatWindow.classList.contains('hidden')) {
+                chatWindow.classList.remove('hidden');
+                chatWindow.classList.add('visible'); // Ensure visible class is added for animation
+                 if (userData) {
                     chatInput.focus();
                 } else {
                     userNameInput.focus();
                 }
+            } else {
+                chatWindow.classList.add('hidden');
+                chatWindow.classList.remove('visible'); // Remove visible class when hiding
             }
+             console.log('Chat window toggled. Current class list:', chatWindow.classList); // Added for debugging
         }
 
         // Close the chat widget
         function closeWidget() {
             chatWindow.classList.add('hidden');
+            chatWindow.classList.remove('visible'); // Ensure visible class is removed when closing
+            console.log('Chat window closed.'); // Added for debugging
         }
 
         // Add a message to the chat
@@ -477,22 +735,39 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}-message`;
             messageDiv.textContent = text;
-            
+
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return typingDiv;
         }
 
         // Handle sending a message
         async function handleSendMessage() {
             const message = chatInput.value.trim();
             if (!message) return;
-            
+
             // Clear input
             chatInput.value = '';
             chatInput.style.height = 'auto';
-            
+
             // Add user message
             addMessage(message, 'user');
+
+            // Show typing indicator
+            const typingIndicator = showTypingIndicator();
 
             try {
                 const response = await fetch(CONFIG.API_URL, {
@@ -508,16 +783,20 @@
                 });
 
                 const data = await response.json();
-                
+
+                // Remove typing indicator
+                typingIndicator.remove();
+
                 // Save session ID
                 if (data.session_id) {
                     sessionId = data.session_id;
                 }
-                
+
                 // Add bot response
                 addMessage(data.response, 'bot');
             } catch (error) {
                 console.error('Error:', error);
+                typingIndicator.remove();
                 addMessage('Sorry, there was an error. Please try again.', 'bot');
             }
         }
@@ -534,4 +813,4 @@
         document.addEventListener('DOMContentLoaded', initChatWidget);
     </script>
 </body>
-</html> 
+</html>
