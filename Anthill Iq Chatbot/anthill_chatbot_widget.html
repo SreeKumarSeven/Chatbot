@@ -38,22 +38,14 @@
             --border-color: #e2e8f0;
             --transition-fast: all 0.2s ease-in-out;
             --transition-medium: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* Desktop / Larger Screen Variables */
-            --chat-window-width-desktop: 380px;
-            --chat-window-height-desktop: 550px;
-            --chat-toggle-size-desktop: 64px;
-            --spacing-desktop-lg: 24px;
-            --spacing-desktop-md: 16px;
-            --spacing-desktop-sm: 12px;
 
-            /* Mobile / Smaller Screen Variables (will be overridden in media query) */
-            --chat-window-width-mobile: 90vw;
-            --chat-window-height-mobile: 70vh;
-            --chat-toggle-size-mobile: 56px;
-            --spacing-mobile-lg: 16px;
-            --spacing-mobile-md: 12px;
-            --spacing-mobile-sm: 8px;
-
+            /* Desktop Sizes and Spacing */
+            --chat-window-width: 380px;
+            --chat-window-height: 550px;
+            --chat-toggle-size: 64px;
+            --spacing-lg: 24px;
+            --spacing-md: 16px;
+            --spacing-sm: 12px;
 
             --message-max-width: 85%;
             --border-radius-lg: 20px;
@@ -66,17 +58,11 @@
             --font-size-heading: clamp(16px, 2vw, 18px);
         }
 
-        /* Main widget container */
-        /* Positions the entire widget (button and window) relative to the iframe viewport */
+        /* Remove the chat-widget container positioning - no longer needed as children are fixed */
         .chat-widget {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            position: fixed; /* Widget is fixed relative to the iframe viewport */
-            bottom: var(--spacing-desktop-lg);
-            right: var(--spacing-desktop-lg);
-            z-index: 1000;
-            /* Size is determined by the chat window and button positioning */
-            width: auto;
-            height: auto;
+             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+             z-index: 1000;
+             /* No position, width, height here */
              pointer-events: none; /* Clicks pass through the widget container itself */
         }
 
@@ -85,10 +71,10 @@
          }
 
 
-        /* Chat toggle button */
+        /* Chat toggle button - Fixed positioning relative to iframe viewport */
         .chat-toggle {
-            width: var(--chat-toggle-size-desktop);
-            height: var(--chat-toggle-size-desktop);
+            width: var(--chat-toggle-size);
+            height: var(--chat-toggle-size);
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
@@ -99,11 +85,11 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition-fast);
-            position: fixed; /* Button is fixed relative to the iframe viewport */
-            bottom: var(--spacing-desktop-lg);
-            right: var(--spacing-desktop-lg);
+            position: fixed; /* Fixed relative to iframe viewport */
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
             overflow: hidden;
-             z-index: 1001; /* Ensure button is above the window when both are fixed */
+             z-index: 1001; /* Ensure button is above the window */
         }
 
         .chat-toggle:hover {
@@ -117,24 +103,24 @@
         }
 
          .chat-toggle svg {
-             width: calc(var(--chat-toggle-size-desktop) * 0.5); /* Scale SVG with desktop button size */
-             height: calc(var(--chat-toggle-size-desktop) * 0.5);
+             width: calc(var(--chat-toggle-size) * 0.5);
+             height: calc(var(--chat-toggle-size) * 0.5);
              fill: white;
          }
 
-        /* Chat window */
+        /* Chat window - Fixed positioning relative to iframe viewport */
         .chat-window {
-            position: fixed; /* Window is fixed relative to the iframe viewport */
-            bottom: calc(var(--spacing-desktop-lg) + var(--chat-toggle-size-desktop) + 10px); /* Position above button */
-            right: var(--spacing-desktop-lg);
-            width: var(--chat-window-width-desktop); /* Desktop width */
-            height: var(--chat-window-height-desktop); /* Desktop height */
+            position: fixed; /* Fixed relative to iframe viewport */
+            bottom: calc(var(--spacing-lg) + var(--chat-toggle-size) + 10px); /* Position above button */
+            right: var(--spacing-lg);
+            width: var(--chat-window-width); /* Desktop width */
+            height: var(--chat-window-height); /* Desktop height */
             border-radius: var(--border-radius-lg);
             background-color: var(--bg-white);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Crucial for clipping content to rounded corners */
+            overflow: hidden;
             transition: var(--transition-medium);
             transform-origin: bottom right;
 
@@ -154,12 +140,12 @@
 
         /* Registration form */
         .registration-form {
-            padding: var(--spacing-desktop-lg);
+            padding: var(--spacing-lg);
             background: linear-gradient(to bottom, var(--bg-white) 0%, var(--bg-light) 100%);
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-desktop-md);
-            height: 100%;
+            gap: var(--spacing-md);
+            height: 100%; /* Fill chat window height */
             width: 100%; /* Fill chat window width */
             justify-content: center;
             align-items: center;
@@ -177,7 +163,7 @@
         .registration-form h3 {
             color: var(--text-dark);
             font-size: var(--font-size-lg);
-            margin-bottom: var(--spacing-desktop-sm);
+            margin-bottom: var(--spacing-sm);
             font-weight: 800;
              line-height: 1.2;
         }
@@ -185,7 +171,7 @@
         .registration-form p {
             color: var(--text-light);
             font-size: var(--font-size-md);
-            margin-bottom: var(--spacing-desktop-md);
+            margin-bottom: var(--spacing-md);
             max-width: 300px;
         }
 
@@ -193,7 +179,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: var(--spacing-desktop-md);
+            margin-bottom: var(--spacing-md);
             width: 100%;
             max-width: 300px;
             text-align: left;
@@ -242,7 +228,7 @@
             font-size: var(--font-size-md);
             cursor: pointer;
             transition: var(--transition-fast);
-            margin-top: var(--spacing-desktop-md);
+            margin-top: var(--spacing-md);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -262,7 +248,7 @@
 
         .submit-button:active {
             transform: translateY(0);
-            box-shadow: 4px 10px var(--shadow-light); /* Corrected shadow */
+            box-shadow: 4px 10px var(--shadow-light);
         }
 
         /* Chat interface */
@@ -274,14 +260,14 @@
         }
 
         .chat-header {
-            padding: var(--spacing-desktop-md);
+            padding: var(--spacing-md);
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top-left-radius: var(--border-radius-lg); /* Explicitly match window radius */
-            border-top-right-radius: var(--border-radius-lg); /* Explicitly match window radius */
+            border-top-left-radius: var(--border-radius-lg);
+            border-top-right-radius: var(--border-radius-lg);
              flex-shrink: 0;
         }
 
@@ -314,11 +300,11 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: var(--spacing-desktop-md);
+            padding: var(--spacing-md);
             background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-desktop-sm);
+            gap: var(--spacing-sm);
              scrollbar-width: thin;
              scrollbar-color: var(--primary-color) var(--bg-light);
         }
@@ -330,7 +316,7 @@
 
         .message {
             max-width: var(--message-max-width);
-            padding: var(--spacing-desktop-sm) var(--spacing-desktop-md);
+            padding: var(--spacing-sm) var(--spacing-md);
             border-radius: var(--border-radius-md);
             font-size: var(--font-size-md);
             animation: fadeIn 0.3s ease forwards;
@@ -359,11 +345,11 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: var(--spacing-desktop-sm) var(--spacing-desktop-md);
+            padding: var(--spacing-sm) var(--spacing-md);
             background: var(--bg-white);
             border-radius: var(--border-radius-md);
             width: fit-content;
-            margin: var(--spacing-desktop-sm) 0;
+            margin: var(--spacing-sm) 0;
             animation: fadeIn 0.3s ease forwards;
              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
@@ -386,11 +372,11 @@
         }
 
         .chat-input-area {
-            padding: var(--spacing-desktop-md);
+            padding: var(--spacing-md);
             background: var(--bg-white);
             border-top: 1px solid var(--border-color);
             display: flex;
-            gap: var(--spacing-desktop-sm);
+            gap: var(--spacing-sm);
             align-items: flex-end;
              flex-shrink: 0;
         }
@@ -442,12 +428,12 @@
         .send-button:hover {
             background: linear-gradient(135deg, var(--primary-dark), #015a0a);
             transform: scale(1.1);
-             box-shadow: 4px 12px var(--shadow-dark); /* Corrected shadow */
+             box-shadow: 4px 12px var(--shadow-dark);
         }
 
         .send-button:active {
             transform: scale(0.95);
-             box-shadow: 2px 8px var(--shadow-light); /* Corrected shadow */
+             box-shadow: 2px 8px var(--shadow-light);
         }
 
          .send-button svg {
@@ -483,50 +469,50 @@
         /* Mobile responsiveness WITHIN the iframe */
         /* These styles apply when the *iframe itself* is <= 480px wide */
         @media (max-width: 480px) {
-            :root {
-                 /* Override variables for mobile */
-                --chat-window-width-desktop: var(--chat-window-width-mobile);
-                --chat-window-height-desktop: var(--chat-window-height-mobile);
-                --chat-toggle-size-desktop: var(--chat-toggle-size-mobile);
-                --spacing-desktop-lg: var(--spacing-mobile-lg);
-                --spacing-desktop-md: var(--spacing-mobile-md);
-                --spacing-desktop-sm: var(--spacing-mobile-sm);
+            /* Mobile Sizes and Spacing overrides */
+             :root {
+                --chat-window-width: 90vw; /* 90% of iframe viewport width */
+                --chat-window-height: 450px; /* 70% of iframe viewport height */
+                --chat-toggle-size: 56px;
+                --spacing-lg: 16px;
+                --spacing-md: 12px;
+                --spacing-sm: 8px;
             }
 
-            /* Chat widget container remains fixed */
+
+            /* Chat widget container remains fixed, uses mobile spacing */
             .chat-widget {
-                position: fixed; /* Stays fixed relative to iframe viewport */
-                bottom: var(--spacing-desktop-lg); /* Use mobile spacing */
-                right: var(--spacing-desktop-lg); /* Use mobile spacing */
-                 /* Size is now determined by the window and button fixed positioning */
+                position: fixed;
+                bottom: var(--spacing-lg);
+                right: var(--spacing-lg);
                  width: auto;
                  height: auto;
             }
 
             /* Chat toggle button remains fixed, uses mobile spacing and size */
             .chat-toggle {
-                width: var(--chat-toggle-size-desktop);
-                height: var(--chat-toggle-size-desktop);
-                bottom: var(--spacing-desktop-lg);
-                right: var(--spacing-desktop-lg);
-                 margin: 0; /* Remove margin */
+                width: var(--chat-toggle-size);
+                height: var(--chat-toggle-size);
+                bottom: var(--spacing-lg);
+                right: var(--spacing-lg);
+                 margin: 0;
             }
 
              .chat-toggle svg {
-                 width: calc(var(--chat-toggle-size-desktop) * 0.5); /* Scale SVG with mobile button size */
-                 height: calc(var(--chat-toggle-size-desktop) * 0.5);
+                 width: calc(var(--chat-toggle-size) * 0.5);
+                 height: calc(var(--chat-toggle-size) * 0.5);
              }
 
 
             /* Chat window remains fixed, uses mobile size and position */
             .chat-window {
                 position: fixed;
-                bottom: calc(var(--spacing-desktop-lg) + var(--chat-toggle-size-desktop) + 10px); /* Position above button using mobile spacing */
-                right: var(--spacing-desktop-lg); /* Use mobile spacing */
-                width: var(--chat-window-width-desktop); /* Use mobile width variable */
-                height: var(--chat-window-height-desktop); /* Use mobile height variable */
-                border-radius: var(--border-radius-lg); /* Keep rounded corners */
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Slightly less shadow than desktop */
+                bottom: calc(var(--spacing-lg) + var(--chat-toggle-size) + 10px);
+                right: var(--spacing-lg);
+                width: var(--chat-window-width); /* Use mobile width variable (vw) */
+                height: var(--chat-window-height); /* Use mobile height variable (vh) */
+                border-radius: var(--border-radius-lg);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             }
 
 
@@ -534,23 +520,23 @@
             .registration-form,
             .chat-header,
             .chat-input-area {
-                padding: var(--spacing-desktop-md);
+                padding: var(--spacing-md);
             }
 
             .chat-messages {
-                 padding: var(--spacing-desktop-md);
-                 gap: var(--spacing-desktop-sm);
+                 padding: var(--spacing-md);
+                 gap: var(--spacing-sm);
             }
 
             .message {
-                 padding: var(--spacing-desktop-sm);
+                 padding: var(--spacing-sm);
             }
 
              .form-group {
-                 max-width: 90%; /* Adjust max width for form on small screens */
+                 max-width: 90%;
              }
              .submit-button {
-                 max-width: 90%; /* Adjust max width for button on small screens */
+                 max-width: 90%;
              }
         }
     </style>
